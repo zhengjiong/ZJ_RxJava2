@@ -25,6 +25,11 @@ public class Example2 {
         Subscriber<Integer> subscriber = new Subscriber<Integer>() {
             @Override
             public void onSubscribe(Subscription s) {
+                /**
+                 * 需要注意的是，在onSubscribe中，我们需要调用request去请求资源，参数就是要请求的数量，
+                 * 一般如果不限制请求数量，可以写成Long.MAX_VALUE。如果你不调用request，
+                 * Subscriber的onNext和onComplete方法将不会被调用。
+                 */
                 System.out.println("onSubscribe 1");
                 s.request(20);
                 System.out.println("onSubscribe 2");
