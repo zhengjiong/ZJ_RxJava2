@@ -6,6 +6,10 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
+/**
+ * RxJava 2.0 最核心的是Publisher和Subscriber。Publisher可以发出一系列的事件，而Subscriber负责和处理这些事件。
+ * 平常用得最多的Publisher是Flowable，它支持背压
+ */
 public class Example1 {
 
     public static void main(String[] args) {

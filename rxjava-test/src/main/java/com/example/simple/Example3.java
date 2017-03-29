@@ -11,6 +11,10 @@ import io.reactivex.functions.Consumer;
 /**
  * Title: Example3
  * Description:
+ *
+ * RxJava 2.0 最核心的是Publisher和Subscriber。Publisher可以发出一系列的事件，而Subscriber负责和处理这些事件。
+ * 平常用得最多的Publisher是Flowable，它支持背压
+ *
  * Copyright:Copyright(c)2016
  * Company: 博智维讯信息技术有限公司
  * CreateTime:17/3/29  16:03
@@ -32,7 +36,9 @@ public class Example3 {
                     @Override
                     public void onSubscribe(Subscription s) {
                         /**
-                         * 必须调用request, Flowable才会执行,Subscriber才能再onNext接收到值
+                         * 需要注意的是，在onSubscribe中，我们需要调用request去请求资源，参数就是要请求的数量，
+                         * 一般如果不限制请求数量，可以写成Long.MAX_VALUE。如果你不调用request，
+                         * Subscriber的onNext和onComplete方法将不会被调用。
                          */
                         s.request(1000);
                     }
