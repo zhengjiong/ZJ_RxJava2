@@ -13,7 +13,6 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 
 /**
  * Title: Example2Concat
@@ -28,33 +27,37 @@ import io.reactivex.functions.Predicate;
 public class Example2Concat {
 
     /**
+     * 伪代码如下:
+     * 如果 (存在缓存) {
+     *    读取缓存并显示
+     * }
+     * 请求网络
+     * 写入缓存
+     * 显示网络数据
+     *
+     *
      * 输出:
      * filter cache-abc
      * onErrorResumeNext
      * onComplete
      */
     public static void main(String[] args) {
-        Flowable.concat(getCache("abc"), getNetwork("empty"))
+        //Flowable.concat(getCache("abc"), getNetwork("efg"))
+        //Flowable.concat(getCache("empty"), getNetwork("efg"))
+        //Flowable.concat(getCache("abc"), getNetwork("empty"))
+        Flowable.concat(getCache("empty"), getNetwork("empty"))
                 .switchIfEmpty(new Flowable<String>() {
                     @Override
                     protected void subscribeActual(Subscriber<? super String> s) {
                         /**
-                         * getCache和getNetwork都返回empty(),才会进入switchIfEmpty,
-                         * 光getNetwork返回Empty不会进入
+                         * getCache和getNetwork都返回empty()时,才会进入switchIfEmpty,
+                         * 光getCache返回Empty不会进入
                          */
                         System.out.println("switchIfEmpty");
-                        //s.onError(new NoSuchElementException("NoSuchElementException"));
-                        //s.onNext("zhengjiong");
+                        s.onError(new NoSuchElementException());
+                        //s.onNext("switchIfEmpty -> zhengjiong");
                     }
                 })
-                .filter(new Predicate<String>() {
-                    @Override
-                    public boolean test(@NonNull String s) throws Exception {
-                        System.out.println("filter " + s + " " + !"cache-abc".equals(s));
-                        return !"cache-abc".equals(s);
-                    }
-                })
-                //.firstElement()
                 .subscribe(new Consumer<String>() {
                     @Override
                     public void accept(@NonNull String s) throws Exception {
@@ -81,7 +84,7 @@ public class Example2Concat {
                 @Override
                 public void subscribe(FlowableEmitter<String> e) throws Exception {
                     e.onNext("cache-" + type);
-                    //e.onComplete();
+                    e.onComplete();
                 }
             }, BackpressureStrategy.BUFFER);
         }
@@ -92,10 +95,9 @@ public class Example2Concat {
             @Override
             public void subscribe(FlowableEmitter<String> e) throws Exception {
                 if ("empty".equals(type)) {
-                    e.onError(new NullPointerException("NullPointerException"));
+                    e.onError(new NullPointerException());
                     //throw new NullPointerException("NullPointerException");
                 } else {
-                    System.out.println("getNetwork-------------------");
                     e.onNext("network-" + type);
                     e.onComplete();
                 }
@@ -106,7 +108,7 @@ public class Example2Concat {
                 /**
                  * doOnNext, 数据获取成功后缓存到本地
                  */
-                System.out.println("doOnNext " + s + "保存在本地");
+                System.out.println("doOnNext " + s + "->将网络数据保存在本地");
             }
         }).onErrorResumeNext(new Function<Throwable, Publisher<? extends String>>() {
             @Override
