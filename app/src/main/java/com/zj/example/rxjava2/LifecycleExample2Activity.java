@@ -8,6 +8,8 @@ import android.support.v7.app.AppCompatActivity;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
+import io.reactivex.Observer;
+import io.reactivex.android.MainThreadDisposable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -25,26 +27,36 @@ import io.reactivex.schedulers.Schedulers;
  * @author 郑炯
  * @version 1.0
  */
-public class LifecycleExample1Activity extends AppCompatActivity {
+public class LifecycleExample2Activity extends AppCompatActivity {
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        compositeDisposable.add(Observable.create(new ObservableOnSubscribe<Integer>() {
+        compositeDisposable.add(new Observable<Integer>() {
+
             @Override
-            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
-                System.out.println("e.isDisposed()" + e.isDisposed());
-                e.onNext(1);
+            protected void subscribeActual(Observer<? super Integer> observer) {
+                observer.onSubscribe(new MainThreadDisposable() {
+                    @Override
+                    protected void onDispose() {
+                        /**
+                         * 当执行compositeDisposable.clear()之后, 会进入此方法
+                         */
+                        System.out.println("onDispose on " + Thread.currentThread().getName());
+                    }
+                });
+                System.out.println("onNext 1");
+                observer.onNext(1);
                 SystemClock.sleep(2000);
-                System.out.println("e.isDisposed()" + e.isDisposed());
-                e.onNext(2);
+                System.out.println("onNext 2");
+                observer.onNext(2);
                 SystemClock.sleep(2000);
-                System.out.println("e.isDisposed()" + e.isDisposed());
-                e.onNext(3);
+                System.out.println("onNext 3");
+                observer.onNext(3);
             }
-        }).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(new Consumer<Integer>() {
+        }.observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(new Consumer<Integer>() {
             @Override
             public void accept(@NonNull Integer integer) throws Exception {
                 System.out.println("onNext -> accept " + integer);
@@ -62,7 +74,10 @@ public class LifecycleExample1Activity extends AppCompatActivity {
         }, new Consumer<Disposable>() {
             @Override
             public void accept(@NonNull Disposable disposable) throws Exception {
-                System.out.println("onSubscribe -> accept");
+                /**
+                 * 当subscribe订阅的时候回立刻进入此方法
+                 */
+                System.out.println("onSubscribe -> accept isDisposed =" + disposable.isDisposed());
             }
         }));
     }

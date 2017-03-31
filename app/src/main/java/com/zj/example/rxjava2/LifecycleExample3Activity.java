@@ -5,15 +5,17 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableEmitter;
-import io.reactivex.ObservableOnSubscribe;
-import io.reactivex.Observer;
+import org.reactivestreams.Subscription;
+
+import io.reactivex.BackpressureStrategy;
+import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.android.MainThreadDisposable;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.disposables.CompositeDisposable;
-import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
+import io.reactivex.functions.Cancellable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
@@ -27,36 +29,54 @@ import io.reactivex.schedulers.Schedulers;
  * @author 郑炯
  * @version 1.0
  */
-public class LifecycleExample2Activity extends AppCompatActivity {
+public class LifecycleExample3Activity extends AppCompatActivity {
     private CompositeDisposable compositeDisposable = new CompositeDisposable();
+    private Subscription subscription;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        compositeDisposable.add(new Observable<Integer>() {
-
+        /**
+         * 此demo是反应错误的情况
+         */
+        compositeDisposable.add(Flowable.create(new FlowableOnSubscribe<Integer>() {
             @Override
-            protected void subscribeActual(Observer<? super Integer> observer) {
-                observer.onSubscribe(new MainThreadDisposable() {
+            public void subscribe(FlowableEmitter<Integer> e) throws Exception {
+                /**
+                 * 注意:
+                 * 通过执行Flowable.create创建的FlowableOnSubscribe, 执行
+                 * setDisposable不是在取消订阅的时候执行而是一订阅就立刻执行!
+                 */
+                e.setDisposable(new MainThreadDisposable() {
                     @Override
                     protected void onDispose() {
-                        System.out.println("onDispose on " + Thread.currentThread().getName());
+                        System.out.println("setDisposable onDispose " + Thread.currentThread().getName());
+                    }
+                });
+                e.setCancellable(new Cancellable() {
+                    @Override
+                    public void cancel() throws Exception {
+                        System.out.println("setCancellable cancel");
                     }
                 });
                 System.out.println("onNext 1");
-                observer.onNext(1);
+                e.onNext(1);
                 SystemClock.sleep(2000);
                 System.out.println("onNext 2");
-                observer.onNext(2);
+                e.onNext(2);
                 SystemClock.sleep(2000);
                 System.out.println("onNext 3");
-                observer.onNext(3);
+                e.onNext(3);
+
             }
-        }.observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(new Consumer<Integer>() {
+        }, BackpressureStrategy.BUFFER).observeOn(Schedulers.io()).subscribeOn(Schedulers.io()).subscribe(new Consumer<Integer>() {
             @Override
             public void accept(@NonNull Integer integer) throws Exception {
                 System.out.println("onNext -> accept " + integer);
+                if (integer == 2) {
+                    //subscription.cancel();
+                }
             }
         }, new Consumer<Throwable>() {
             @Override
@@ -68,12 +88,17 @@ public class LifecycleExample2Activity extends AppCompatActivity {
             public void run() throws Exception {
                 System.out.println("onComplete");
             }
-        }, new Consumer<Disposable>() {
+        }, new Consumer<Subscription>() {
             @Override
-            public void accept(@NonNull Disposable disposable) throws Exception {
-                System.out.println("onSubscribe -> accept isDisposed =" + disposable.isDisposed());
+            public void accept(@NonNull Subscription subscription) throws Exception {
+                /**
+                 * 当subscribe订阅的时候回立刻进入此方法
+                 */
+                System.out.println("onSubscribe accept");
+                LifecycleExample3Activity.this.subscription = subscription;
             }
         }));
+
     }
 
     @Override

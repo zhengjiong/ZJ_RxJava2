@@ -27,7 +27,7 @@ import io.reactivex.functions.Function;
 public class Example2Concat {
 
     /**
-     * 伪代码如下:
+     * 场景伪代码如下:
      * 如果 (存在缓存) {
      *    读取缓存并显示
      * }

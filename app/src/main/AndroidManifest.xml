@@ -10,12 +10,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
+
+        </activity>
+        <activity android:name=".LifecyclerRootActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".LifecycleExample1Activity"/>
+        <activity android:name=".LifecycleExample2Activity"/>
+        <activity android:name=".LifecycleExample3Activity"/>
+        <activity android:name=".LifecycleExample4Activity"/>
     </application>
 
 </manifest>
