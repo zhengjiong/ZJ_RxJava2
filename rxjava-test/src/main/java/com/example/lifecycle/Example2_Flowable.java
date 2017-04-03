@@ -1,7 +1,12 @@
 package com.example.lifecycle;
 
+import io.reactivex.BackpressureStrategy;
 import io.reactivex.Flowable;
+import io.reactivex.FlowableEmitter;
+import io.reactivex.FlowableOnSubscribe;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
@@ -16,7 +21,7 @@ import io.reactivex.functions.Consumer;
  * @author 郑炯
  * @version 1.0
  */
-public class Example1 {
+public class Example2_Flowable {
 
 
     public static void main(String[] args) {
@@ -24,6 +29,8 @@ public class Example1 {
     }
 
     /**
+     * doOnCancel相当于Observable的doOnDispose方法
+     *
      * 注意:
      * 经过测试发现:doOnDispose执行的前提是必须手动执行了取消订阅方法,才会进入!
      * 正常onComplete之后是不会进入的,必须执行dispose,或者clear等方法才行!
@@ -35,7 +42,15 @@ public class Example1 {
      * onComplete
      */
     private static void test1() {
-        Observable.just(1, 2, 3).doOnDispose(new Action() {
+        Flowable.create(new FlowableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(FlowableEmitter<Integer> e) throws Exception {
+                e.onNext(1);
+                e.onNext(2);
+                e.onNext(3);
+                e.onComplete();
+            }
+        }, BackpressureStrategy.LATEST).doOnCancel(new Action() {
             @Override
             public void run() throws Exception {
                 System.out.println("doOnDispose");

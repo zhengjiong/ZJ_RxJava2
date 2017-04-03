@@ -1,7 +1,8 @@
 package com.example.lifecycle;
 
-import io.reactivex.Flowable;
 import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
@@ -16,7 +17,7 @@ import io.reactivex.functions.Consumer;
  * @author 郑炯
  * @version 1.0
  */
-public class Example1 {
+public class Example2 {
 
 
     public static void main(String[] args) {
@@ -35,7 +36,15 @@ public class Example1 {
      * onComplete
      */
     private static void test1() {
-        Observable.just(1, 2, 3).doOnDispose(new Action() {
+        Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> e) throws Exception {
+                e.onNext(1);
+                e.onNext(2);
+                e.onNext(3);
+                e.onComplete();
+            }
+        }).doOnDispose(new Action() {
             @Override
             public void run() throws Exception {
                 System.out.println("doOnDispose");

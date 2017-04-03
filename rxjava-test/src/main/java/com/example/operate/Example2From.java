@@ -14,7 +14,7 @@ import io.reactivex.functions.Function;
  * Title: Example2From
  * Description:
  * Copyright:Copyright(c)2016
- * Company: 博智维讯信息技术有限公司
+
  * CreateTime:17/3/29  16:25
  *
  * @author 郑炯

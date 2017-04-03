@@ -9,7 +9,7 @@ import io.reactivex.functions.Consumer;
  * Title: Example5Null
  * Description:
  * Copyright:Copyright(c)2016
- * Company: 博智维讯信息技术有限公司
+
  * CreateTime:17/3/29  17:19
  *
  * @author 郑炯

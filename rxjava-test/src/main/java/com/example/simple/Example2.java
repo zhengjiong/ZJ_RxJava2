@@ -11,14 +11,14 @@ import io.reactivex.annotations.NonNull;
 import io.reactivex.functions.Consumer;
 
 /**
- * Title: Example2
+ * Title: Example4
  * Description:
  *
  * RxJava 2.0 最核心的是Publisher和Subscriber。Publisher可以发出一系列的事件，而Subscriber负责和处理这些事件。
  * 平常用得最多的Publisher是Flowable，它支持背压
  *
  * Copyright:Copyright(c)2016
- * Company: 博智维讯信息技术有限公司
+
  * CreateTime:17/3/27  17:08
  *
  * @author 郑炯

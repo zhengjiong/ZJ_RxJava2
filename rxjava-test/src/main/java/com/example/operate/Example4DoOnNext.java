@@ -10,7 +10,7 @@ import io.reactivex.functions.Consumer;
  * Title: Example4DoOnNext
  * Description:
  * Copyright:Copyright(c)2016
- * Company: 博智维讯信息技术有限公司
+
  * CreateTime:17/3/29  16:41
  *
  * @author 郑炯

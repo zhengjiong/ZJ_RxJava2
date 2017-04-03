@@ -1,5 +1,8 @@
 package com.example.lifecycle;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import io.reactivex.Flowable;
 import io.reactivex.Observable;
 import io.reactivex.annotations.NonNull;
@@ -16,7 +19,7 @@ import io.reactivex.functions.Consumer;
  * @author 郑炯
  * @version 1.0
  */
-public class Example1 {
+public class Example1_Flowable {
 
 
     public static void main(String[] args) {
@@ -24,10 +27,12 @@ public class Example1 {
     }
 
     /**
+     * doOnCancel相当于Observable的doOnDispose方法
+     * <p>
      * 注意:
-     * 经过测试发现:doOnDispose执行的前提是必须手动执行了取消订阅方法,才会进入!
+     * 经过测试发现:doOnCancel执行的前提是必须手动执行了取消订阅方法,才会进入!
      * 正常onComplete之后是不会进入的,必须执行dispose,或者clear等方法才行!
-     *
+     * <p>
      * 输出:
      * onNext 1
      * onNext 2
@@ -35,10 +40,13 @@ public class Example1 {
      * onComplete
      */
     private static void test1() {
-        Observable.just(1, 2, 3).doOnDispose(new Action() {
+        /**
+         * doOnCancel相当于Observable的doOnDispose方法
+         */
+        Flowable.just(1, 2, 3).doOnCancel(new Action() {
             @Override
             public void run() throws Exception {
-                System.out.println("doOnDispose");
+                System.out.println("doOnCancel");
             }
         }).subscribe(new Consumer<Integer>() {
             @Override
