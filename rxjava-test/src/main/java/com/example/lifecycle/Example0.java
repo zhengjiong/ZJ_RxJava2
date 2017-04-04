@@ -1,25 +1,31 @@
-package com.example.error;
+package com.example.lifecycle;
 
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Action;
 
 /**
  * Created by zj on 2017/3/30.
  */
 
-public class Example1 {
+public class Example0 {
 
     public static void main(String[] args) {
-        test1();
+        //test1();
         test2();
     }
 
-
+    /**
+     * 输出:
+     * onSubscribe
+     * onNext 1
+     * onNext 2
+     * onComplete
+     * dispose
+     * send 3
+     */
     private static void test1() {
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
@@ -27,10 +33,9 @@ public class Example1 {
                 e.setDisposable(new Disposable() {
                     @Override
                     public void dispose() {
-                        //代表已经解除订阅
+                        //onComplete执行后, 会进入此方法, 代表已经解除订阅
                         System.out.println("dispose");
                     }
-
                     @Override
                     public boolean isDisposed() {
                         return false;
@@ -38,14 +43,14 @@ public class Example1 {
                 });
                 e.onNext(1);
                 e.onNext(2);
-                e.onComplete();//会导致解除订阅
+                e.onComplete();//执行后会解除订阅
 
-                System.out.println("e.isDisposed() = " +e.isDisposed());
                 /**
-                 * 注意: 和RxJava1的区别:
-                 * RxJava2解除订阅后再次onError会导致程序崩溃!
+                 * 会执行下面这行代码, 但是不会在订阅者中执行onNext3,因为已经onCompleted了, 就已经取消订阅了
                  */
-                e.onError(new RuntimeException("error1"));
+                System.out.println("send 3");
+                e.onNext(3);
+
             }
         }).subscribe(new Observer<Integer>() {
             @Override
@@ -60,7 +65,7 @@ public class Example1 {
 
             @Override
             public void onError(Throwable e) {
-                System.out.println("onError " + e.getMessage());
+                System.out.println("onError");
             }
 
             @Override
@@ -77,10 +82,9 @@ public class Example1 {
                 e.setDisposable(new Disposable() {
                     @Override
                     public void dispose() {
-                        //代表已经解除订阅
+                        // throw new RuntimeException执行后, 会进入此方法, 代表已经解除订阅
                         System.out.println("dispose");
                     }
-
                     @Override
                     public boolean isDisposed() {
                         return false;
@@ -88,17 +92,17 @@ public class Example1 {
                 });
                 e.onNext(1);
                 e.onNext(2);
-                e.onError(new RuntimeException("error-1"));//会导致解除订阅
-
-                System.out.println("e.isDisposed() = " +e.isDisposed());
-                /**
-                 * 注意: 和RxJava1的区别:
-                 * RxJava2解除订阅后再次onError会导致程序崩溃!
-                 * 这里可以加上if判断是否已经取消订阅,不会就会导致崩溃
-                 */
-                if (!e.isDisposed()) {
-                    e.onError(new RuntimeException("error-2"));
+                if (true) {
+                    //执行后会解除订阅
+                    throw new RuntimeException("error-1");
                 }
+
+                /**
+                 * throw exception后, 不会执行以下代码
+                 */
+                System.out.println("send 3");
+                e.onNext(3);
+
             }
         }).subscribe(new Observer<Integer>() {
             @Override

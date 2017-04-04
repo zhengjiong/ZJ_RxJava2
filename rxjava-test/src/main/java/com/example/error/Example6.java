@@ -38,7 +38,7 @@ public class Example6 {
 
                 /**
                  * 第一个onError会进入当观察者的onError中,
-                 * 当时继续发送第二个onError的时候程序崩溃
+                 * 继续发送第二个onError的时候程序崩溃
                  */
                 System.out.println("e.onError 3");
                 e.onError(new RuntimeException("e.onError 3"));
