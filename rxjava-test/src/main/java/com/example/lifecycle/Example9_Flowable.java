@@ -7,7 +7,9 @@ import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.processors.BehaviorProcessor;
+import io.reactivex.subscribers.DefaultSubscriber;
 import io.reactivex.subscribers.DisposableSubscriber;
+import io.reactivex.subscribers.ResourceSubscriber;
 
 /**
  * Title: Example6
@@ -38,7 +40,7 @@ public class Example9_Flowable {
                     }
                 })
                 //.subscribeWith(new MyObserver()));
-                //使用DisposableSubscriber
+                //使用DisposableSubscriber或者DefaultSubscriber或者ResourceSubscriber
                 .subscribeWith(new DisposableSubscriber<Integer>() {
                     @Override
                     public void onNext(Integer integer) {
