@@ -16,32 +16,22 @@ import io.reactivex.functions.Function;
 public class Example6 {
 
     /**
-     * 结果:
-     * Observable.just 1
-     * onNext 1
-     * Observable.error error-1
-     * onError java.lang.RuntimeException: error-1
-     * e.onNext 3
-     * e.onNext 4
+     * 程序会崩溃
      */
     public static void main(String[] args) {
 
         Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> e) throws Exception {
-                /**
-                 * 当flatMap中error之后, 这里还是会继续执行, 但是error之后并不会进入flatMap中,
-                 * 所以也不会导致两次error, 所以程序不会崩溃
-                 */
+
                 e.onNext(1);
-                e.onNext(2);
 
                 /**
                  * 第一个onError会进入当观察者的onError中,
                  * 继续发送第二个onError的时候程序崩溃
                  */
-                System.out.println("e.onError 3");
-                e.onError(new RuntimeException("e.onError 3"));
+                System.out.println("e.onError 1");
+                e.onError(new RuntimeException("e.onError 1"));
 
                 System.out.println("e.onError 4");
                 e.onError(new RuntimeException("e.onError 4"));

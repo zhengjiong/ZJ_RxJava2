@@ -17,19 +17,24 @@ public class Example7_SafeSubscribe_Flowable {
         test2();
     }
 
+    /**
+     * 解决在onNext中抛出异常的两种方式:
+     * 方式1:看test2()
+     * 方式2:看Example8
+     */
     private static void test1() {
         Flowable.just(1, 2)
                 .subscribe(new Subscriber<Integer>() {
                                @Override
                                public void onSubscribe(Subscription s) {
-                                    s.request(Long.MAX_VALUE);
+                                   s.request(Long.MAX_VALUE);
                                }
 
                                @Override
                                public void onNext(Integer t) {
                                    if (t == 1) {
                                        /**
-                                        * 这里抛出异常会报错, Flowable不循序在onNext中抛出异常
+                                        * 这里抛出异常会报错, Flowable不允许在onNext中抛出异常
                                         * 就算是System.out.println(1/0)这样也不行,
                                         * 如果要这样操作的话可以使用SafeSubscriber,
                                         * 看test2方法
@@ -56,9 +61,13 @@ public class Example7_SafeSubscribe_Flowable {
                 );
     }
 
+    /**
+     * 解决在onNext中抛出异常的两种方式:
+     * 方式1:看test2()
+     * 方式2:看Example8
+     */
     private static void test2() {
-
-        Flowable.just(1,2)
+        Flowable.just(1, 2)
                 //使用SafeSubscriber才可以在onNext中抛出异常
                 .subscribe(new SafeSubscriber<Integer>(new Subscriber<Integer>() {
                     @Override
