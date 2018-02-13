@@ -57,6 +57,12 @@ public class LifecyclerRootActivity extends AppCompatActivity {
                 startActivity(new Intent(LifecyclerRootActivity.this, LifecycleExample5Activity.class));
             }
         });
+        findViewById(R.id.btn6).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LifecyclerRootActivity.this, LifecycleExample6Activity.class));
+            }
+        });
 
     }
 }

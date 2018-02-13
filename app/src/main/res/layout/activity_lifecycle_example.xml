@@ -38,4 +38,10 @@
         android:layout_height="wrap_content"
         android:text="example5"
         android:textAllCaps="false"/>
+    <Button
+        android:id="@+id/btn6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="example6"
+        android:textAllCaps="false"/>
 </LinearLayout>
