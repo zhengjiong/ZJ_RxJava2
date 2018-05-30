@@ -33,6 +33,7 @@ public class LifecycleExample1Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //使用Observable.create创建一个被观察者
         compositeDisposable.add(Observable.create(new ObservableOnSubscribe<Integer>() {
             @Override
             public void subscribe(ObservableEmitter<Integer> e) throws Exception {

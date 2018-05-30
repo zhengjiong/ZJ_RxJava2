@@ -25,6 +25,8 @@
         <activity android:name=".LifecycleExample4Activity"/>
         <activity android:name=".LifecycleExample5Activity"/>
         <activity android:name=".LifecycleExample6Activity"/>
+        <activity android:name=".LifecycleExample7Activity"/>
+        <activity android:name=".LifecycleExample8Activity"/>
     </application>
 
 </manifest>

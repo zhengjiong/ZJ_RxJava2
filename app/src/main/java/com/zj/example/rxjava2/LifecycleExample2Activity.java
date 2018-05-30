@@ -34,6 +34,7 @@ public class LifecycleExample2Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //这里是new一个Observable对象
         compositeDisposable.add(new Observable<Integer>() {
 
             @Override
@@ -76,6 +77,9 @@ public class LifecycleExample2Activity extends AppCompatActivity {
             public void accept(@NonNull Disposable disposable) throws Exception {
                 /**
                  * 当subscribe订阅的时候回立刻进入此方法
+                 *
+                 * 也可以在这里获取disposable对象:
+                 * compositeDisposable.add(disposable)
                  */
                 System.out.println("onSubscribe -> accept isDisposed =" + disposable.isDisposed());
             }
