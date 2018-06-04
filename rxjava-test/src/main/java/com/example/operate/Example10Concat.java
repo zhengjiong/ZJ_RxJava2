@@ -24,6 +24,8 @@ public class Example10Concat {
 
     /**
      * concat串联连接两个Observable
+     * concat 可以做到不交错的发射两个甚至多个 Observable 的发射事件，并且只有前一个
+     * Observable 终止( onComplete() ) 后才会定义下一个 Observable。
      *
      * 输出:
      * onNext -> 1
