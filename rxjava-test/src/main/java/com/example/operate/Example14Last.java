@@ -34,7 +34,9 @@ public class Example14Last {
                 //如果这里不onNext就会输出last中的值
                 e.onComplete();
             }
-        }).last(9).subscribe(new SingleObserver<Integer>() {
+            //默认值9
+        }).last(9)
+                .subscribe(new SingleObserver<Integer>() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -59,7 +61,7 @@ public class Example14Last {
      */
     private static void test2() {
         Observable.just(1, 2, 3)
-                .last(9)
+                .last(9)//默认值9
                 .subscribe(new SingleObserver<Integer>() {
                     @Override
                     public void onSubscribe(Disposable d) {
