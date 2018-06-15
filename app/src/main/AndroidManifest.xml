@@ -12,7 +12,8 @@
         <activity android:name=".MainActivity">
 
         </activity>
-        <activity android:name=".LifecyclerRootActivity">
+        <!--<activity android:name=".LifecyclerRootActivity">-->
+        <activity android:name=".backpressure.ObservableExample">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
