@@ -18,7 +18,7 @@ import io.reactivex.schedulers.Schedulers;
  * @author 郑炯
  * @version 1.0
  */
-public class ErrorTest {
+public class Examle10_ErrorTest {
 
     public static void main(String[] args){
         //test1();
