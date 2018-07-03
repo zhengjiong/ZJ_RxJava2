@@ -23,8 +23,8 @@ public class Example3_Flowable_DROP {
 
     public static void main(String[] args) {
         //test1();
-        //test2();
-        test3();
+        test2();
+        //test3();
 
     }
 
@@ -50,7 +50,7 @@ public class Example3_Flowable_DROP {
          */
         Flowable.create(new FlowableOnSubscribe<Long>() {
             @Override
-            public void subscribe(final FlowableEmitter<Long> e) throws Exception {
+            public void subscribe(final FlowableEmitter<Long> e) {
                 for (long i = 1; ; i++) {
                     //System.out.println("emmit " + i + " " + Thread.currentThread().toString());
                     e.onNext(i);
@@ -134,7 +134,7 @@ public class Example3_Flowable_DROP {
                     e.onNext(i);
                 }
             }
-        }, BackpressureStrategy.DROP).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe(new Subscriber<Long>() {
+        }, BackpressureStrategy.LATEST).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe(new Subscriber<Long>() {
             @Override
             public void onSubscribe(Subscription s) {
                 System.out.println("onSubscribe");
@@ -166,7 +166,7 @@ public class Example3_Flowable_DROP {
         /**
          * Flowable内部的默认的水缸大小为128, 因此使用drop后,它刚开始肯定会把1-128这128个事件保存起来,
          * 然后丢弃掉其余的事件, 当我们request(128)的时候,下游便会处理掉这128个事件, 那么上游水缸中又会重新装进新的128个事件,
-         * 因为上游一直在发送事件,所以第二次request的时候, 不会从128开始, 而是很大的一个数字
+         * 上游一直在发送事件, 第二次request的时候, 上游已经发送完了,并没有装填到水缸中,所有第二次request, 没有输出.
          */
         subscription.request(128);
         //因为默认水缸中最多只能存放128个(buffer除外),用129也只能最多请求128个
@@ -211,12 +211,12 @@ public class Example3_Flowable_DROP {
          */
         Flowable.create(new FlowableOnSubscribe<Long>() {
             @Override
-            public void subscribe(final FlowableEmitter<Long> e) throws Exception {
+            public void subscribe(final FlowableEmitter<Long> e) {
                 for (long i = 1; i < 10000; i++) {
                     e.onNext(i);
                 }
             }
-        }, BackpressureStrategy.DROP).subscribe(new Subscriber<Long>() {
+        }, BackpressureStrategy.DROP).subscribeOn(Schedulers.newThread()).observeOn(Schedulers.newThread()).subscribe(new Subscriber<Long>() {
             @Override
             public void onSubscribe(Subscription s) {
                 System.out.println("onSubscribe");

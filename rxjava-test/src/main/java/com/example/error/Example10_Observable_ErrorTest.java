@@ -18,7 +18,7 @@ import io.reactivex.schedulers.Schedulers;
  * @author 郑炯
  * @version 1.0
  */
-public class Examle10_ErrorTest {
+public class Example10_Observable_ErrorTest {
 
     public static void main(String[] args){
         //test1();
@@ -45,7 +45,7 @@ public class Examle10_ErrorTest {
             @Override
             public void onNext(Integer integer) {
                 System.out.println("onNext " + integer);
-                //抛出异常后, onError不能捕获
+                //这里抛出异常后, onError不能捕获
                 throw new NullPointerException("zhengjiong");
             }
 
