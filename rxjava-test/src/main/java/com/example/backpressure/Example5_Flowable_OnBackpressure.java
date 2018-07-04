@@ -15,7 +15,7 @@ import io.reactivex.schedulers.Schedulers;
  * @author 郑炯
  * @version 1.0
  */
-public class Example5Flowable_OnBackpressure {
+public class Example5_Flowable_OnBackpressure {
 
     public static void main(String[] args) {
         test1();
