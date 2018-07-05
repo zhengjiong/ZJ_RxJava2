@@ -102,9 +102,10 @@ public class Example6_Flowable_requested {
      * 输出:
      * onSubscribe
      * onNext 1
+     * request amount 1
+     * onNext 2
      * request amount 0
      * onError io.reactivex.exceptions.MissingBackpressureException: create: could not emit value due to lack of requests
-     * request amount 0
      */
     private static void test3() {
         Flowable.create(new FlowableOnSubscribe<Integer>() {
@@ -114,11 +115,13 @@ public class Example6_Flowable_requested {
                 System.out.println("request amount " + e.requested());
                 e.onNext(2);
                 System.out.println("request amount " + e.requested());
+                e.onNext(3);
             }
         }, BackpressureStrategy.ERROR).subscribe(new Subscriber<Integer>() {
             @Override
             public void onSubscribe(Subscription s) {
                 System.out.println("onSubscribe");
+                s.request(1);
                 s.request(1);
             }
 
