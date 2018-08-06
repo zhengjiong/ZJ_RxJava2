@@ -8,6 +8,8 @@ import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -24,7 +26,8 @@ public class Example15Merge {
      */
     public static void main(String[] args) {
         //test1();
-        test2();
+        //test2();
+        test3();
     }
 
     /**
@@ -130,5 +133,39 @@ public class Example15Merge {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void test3(){
+        Observable.mergeDelayError(Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> e) throws Exception {
+                if (true) {
+                    throw new RuntimeException("1");
+                }
+                e.onNext("1");
+                e.onComplete();
+            }
+        }), Observable.create(new ObservableOnSubscribe<String>() {
+            @Override
+            public void subscribe(ObservableEmitter<String> e) throws Exception {
+                e.onNext("2");
+                e.onComplete();
+            }
+        })).subscribe(new Consumer<String>() {
+            @Override
+            public void accept(String s) throws Exception {
+                System.out.println("onNext " + s);
+            }
+        }, new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                System.out.println("onError " + throwable);
+            }
+        }, new Action() {
+            @Override
+            public void run() throws Exception {
+                System.out.println("onComplete");
+            }
+        });
     }
 }
